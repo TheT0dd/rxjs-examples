@@ -1,12 +1,15 @@
 import $ from 'jquery';
 import Rx from 'rxjs/Rx';
 
-// custom observable
+// a custom observable
 const observable = new Rx.Observable((observer) => {
 	var id = setTimeout(() => {
 		observer.next('hi');
 	}, 1000);
 });
+
+// an observable created from a static array
+const observable2 = Rx.Observable.from([1,2,3]);
 
 // another custom observable
 const observable3 = Rx.Observable.create((observer) => {
@@ -15,9 +18,6 @@ const observable3 = Rx.Observable.create((observer) => {
 	observer.next(33);
 	observer.complete();
 });
-
-// from static array
-const observable2 = Rx.Observable.from([1,2,3]);
 
 // Function that returns promise
 const doAsycStuff = () => new Promise((resolve, reject) => {
@@ -52,25 +52,28 @@ const observable4 = fromPromise(doAsycStuff());
 // const observable5 = Rx.Observable.fromEvent(doAsycStuff());
 const observable5 = fromEvent(document, 'click');
 
-// Subscribe to observables
+// Subscribe to observables:
+// passing only a next handler
 observable.subscribe(x => console.log(x));
+// passing next, error & complete handlers
 observable2.subscribe(
 	x => console.log(x),
 	null,
-	completed => console.log('done!')
+	() => console.log('done!')
 );
-observable3.subscribe(
-	x => console.log(x),
-	null,
-	completed => console.log('done!')
-);
+// passing observer object
+observable3.subscribe({
+	next: x => console.log(x),
+	error: null,
+	complete: () => console.log('done!')
+});
 observable4.subscribe(
 	x => console.log(x),
 	err => console.log(err),
-	completed => console.log('done!')
+	() => console.log('done!')
 );
 observable5.subscribe(
 	x => console.log(x),
 	err => console.log(err),
-	completed => console.log('done!')
+	() => console.log('done!')
 );
